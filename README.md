@@ -61,6 +61,14 @@ GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 DISCORD_CLIENT_ID=""
 DISCORD_CLIENT_SECRET=""
+
+# Storage Configuration
+STORAGE_PROVIDER="local" # 'local' or 's3'
+STORAGE_S3_BUCKET="my-bucket-name"
+STORAGE_S3_REGION="us-east-1"
+STORAGE_S3_ACCESS_KEY_ID=""
+STORAGE_S3_SECRET_ACCESS_KEY=""
+STORAGE_S3_ENDPOINT="" # Leave empty for AWS S3, or set for custom S3 like Cloudflare R2 / MinIO
 ```
 
 ### 4. Database Setup
