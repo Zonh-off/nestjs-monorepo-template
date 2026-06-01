@@ -1,7 +1,9 @@
-import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException, Body } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { AssetQueueService } from '@nestjs-monorepo-template/queue';
+import { CurrentUser } from '../../core/decorators/current-user.decorator';
+import { AuthUser } from '@nestjs-monorepo-template/auth';
 
 interface UploadedFileDto {
   buffer: Buffer;
@@ -27,31 +29,23 @@ export class AssetsController {
           format: 'binary',
           description: 'The raw avatar image file (PNG/JPEG/etc.)',
         },
-        userId: {
-          type: 'string',
-          description: 'The user ID this avatar belongs to',
-          default: 'user_12345',
-        },
       },
-      required: ['file', 'userId'],
+      required: ['file'],
     },
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(
-    @UploadedFile() file?: UploadedFileDto,
-    @Body('userId') userId?: string
+    @UploadedFile() file: UploadedFileDto | undefined,
+    @CurrentUser() user: AuthUser
   ) {
     if (!file) {
       throw new BadRequestException('No file provided for avatar upload.');
     }
-    if (!userId) {
-      throw new BadRequestException('No userId provided.');
-    }
-    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, userId, 'avatar');
+    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, user.id, 'avatar');
     return {
       success: true,
       message: 'Raw avatar uploaded and WebP background optimization queued successfully.',
-      userId,
+      userId: user.id,
       rawUrl: result.rawUrl,
       expectedOutputs: result.expectedOutputs,
     };
@@ -69,31 +63,23 @@ export class AssetsController {
           format: 'binary',
           description: 'The raw banner image file (PNG/JPEG/etc.)',
         },
-        userId: {
-          type: 'string',
-          description: 'The user ID this banner belongs to',
-          default: 'user_12345',
-        },
       },
-      required: ['file', 'userId'],
+      required: ['file'],
     },
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadBanner(
-    @UploadedFile() file?: UploadedFileDto,
-    @Body('userId') userId?: string
+    @UploadedFile() file: UploadedFileDto | undefined,
+    @CurrentUser() user: AuthUser
   ) {
     if (!file) {
       throw new BadRequestException('No file provided for banner upload.');
     }
-    if (!userId) {
-      throw new BadRequestException('No userId provided.');
-    }
-    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, userId, 'banner');
+    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, user.id, 'banner');
     return {
       success: true,
       message: 'Raw banner uploaded and WebP background optimization queued successfully.',
-      userId,
+      userId: user.id,
       rawUrl: result.rawUrl,
       expectedOutputs: result.expectedOutputs,
     };
@@ -111,31 +97,23 @@ export class AssetsController {
           format: 'binary',
           description: 'The raw post image file (PNG/JPEG/etc.)',
         },
-        userId: {
-          type: 'string',
-          description: 'The user ID this post image belongs to',
-          default: 'user_12345',
-        },
       },
-      required: ['file', 'userId'],
+      required: ['file'],
     },
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadPost(
-    @UploadedFile() file?: UploadedFileDto,
-    @Body('userId') userId?: string
+    @UploadedFile() file: UploadedFileDto | undefined,
+    @CurrentUser() user: AuthUser
   ) {
     if (!file) {
       throw new BadRequestException('No file provided for post image upload.');
     }
-    if (!userId) {
-      throw new BadRequestException('No userId provided.');
-    }
-    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, userId, 'post');
+    const result = await this.assetQueueService.uploadAndOptimizeAsset(file, user.id, 'post');
     return {
       success: true,
       message: 'Raw post uploaded and WebP background optimization queued successfully.',
-      userId,
+      userId: user.id,
       rawUrl: result.rawUrl,
       expectedOutputs: result.expectedOutputs,
     };
