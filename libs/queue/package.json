@@ -6,6 +6,7 @@
   "types": "src/index.ts",
   "dependencies": {
     "@nestjs-monorepo-template/common": "workspace:*",
+    "@nestjs-monorepo-template/prisma": "workspace:*",
     "@nestjs/bullmq": "latest",
     "bullmq": "^5.8.0",
     "@nestjs-monorepo-template/storage": "workspace:*",

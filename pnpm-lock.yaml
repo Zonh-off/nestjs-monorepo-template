@@ -318,6 +318,9 @@ importers:
       '@nestjs-monorepo-template/common':
         specifier: workspace:*
         version: link:../common
+      '@nestjs-monorepo-template/prisma':
+        specifier: workspace:*
+        version: link:../prisma
       '@nestjs-monorepo-template/storage':
         specifier: workspace:*
         version: link:../storage

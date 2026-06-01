@@ -5,6 +5,7 @@ import { ASSET_QUEUE, OptimizeAssetPayload, ImageVariant } from './asset.types';
 import { StorageService } from '@nestjs-monorepo-template/storage';
 import { ASSET_PRESETS } from './asset.config';
 import { getOptimizedAssetPath } from './asset.utility';
+import { PrismaService } from '@nestjs-monorepo-template/prisma';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -12,7 +13,10 @@ import * as path from 'path';
 export class AssetQueueProcessor extends WorkerHost {
   private readonly logger = new Logger(AssetQueueProcessor.name);
 
-  constructor(private readonly storage: StorageService) {
+  constructor(
+    private readonly storage: StorageService,
+    private readonly prisma: PrismaService
+  ) {
     super();
   }
 
@@ -91,6 +95,12 @@ export class AssetQueueProcessor extends WorkerHost {
 
       results[variant] = publicUrl;
     }
+
+    // Update database status to READY upon successful multi-resolution WebP optimization
+    await this.prisma.asset.update({
+      where: { id: data.assetId },
+      data: { status: 'READY' }
+    });
 
     this.logger.log(`[Worker] Asset ${data.type}/${data.assetId} optimized successfully! WebP variants generated: ${JSON.stringify(results)}`);
   }
